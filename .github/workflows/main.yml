@@ -57,3 +57,9 @@ jobs:
       with:
         name: release-apk
         path: build/app/outputs/apk/release/app-release.apk
+    - run: |
+          gh release create v0.0.1 build/app/outputs/apk/release/app-release.apk
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
+      name: Creates a release in GitHub and uploads attachments
