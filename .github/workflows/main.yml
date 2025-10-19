@@ -28,7 +28,7 @@ jobs:
     # Setup the flutter environment.
     - uses: subosito/flutter-action@v2
       with:
-        channel: 'beta' # 'dev', 'alpha', default to: 'stable'
+        channel: 'stable' # 'dev', 'alpha', default to: 'stable'
         flutter-version: '3.29.3' # you can also specify exact version of flutter
         
     - name: Add API BASE URL
