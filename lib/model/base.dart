@@ -19,3 +19,7 @@ class BaseResponse<T>{
 
   BaseResponse({required this.statusCode, required this.statusMessage, this.data});
 }
+
+abstract class BaseRequest{
+  Map<String, dynamic> toJson();
+}

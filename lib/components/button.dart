@@ -10,18 +10,25 @@ mixin CustomButton implements TextButton {
     Color colorFill = CustomColor.tertiary,
     Color colorText = CustomColor.primaryDark,
     double? horizontalPad = 0,
-    bool? isDense = false
+    bool isLoading = false,
+    bool? isDense = false,
   }) {
     return TextButton(
-      onPressed: onPress,
+      onPressed: isLoading == true ? () {} : onPress,
       style: TextButton.styleFrom(
         backgroundColor: colorFill,
-        padding: EdgeInsets.symmetric(horizontal: horizontalPad ?? 0, vertical: 0),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPad ?? 0,
+          vertical: 0,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
-        )
+        ),
       ),
-      child: Text(text, style: CustomText.subHeading3(color: colorText)),
+      child:
+          isLoading == true
+              ? const CircularProgressIndicator()
+              : Text(text, style: CustomText.subHeading3(color: colorText)),
     );
   }
 

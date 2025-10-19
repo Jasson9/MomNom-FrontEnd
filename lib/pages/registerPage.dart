@@ -7,6 +7,7 @@ import 'package:MomNom/model/base.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../etc/requestHandler.dart';
 import '../etc/styles.dart';
 import '../components/textfield.dart';
 import '../components/button.dart';
@@ -31,53 +32,46 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       isLoading = true;
     });
-    // TODO: Loading Indicator
-    // TODO: Validation
+
     try {
-      var url = URLEndpoint.registerEndpoint;
+      if(strUsername.isEmpty){
+        throw ValidationException("Username should not be empty");
+      }
+      if(strEmail.isEmpty){
+        throw ValidationException("Email should not be empty");
+      }
+      if(strPassword.isEmpty){
+        throw ValidationException("Password should not be empty");
+      }
+      if(strPasswordConfirm.isEmpty){
+        throw ValidationException("Confirm Password should not be empty");
+      }
+      if(strPassword != strPasswordConfirm){
+        throw ValidationException("Confirm Password is not same with Password");
+      }
+
+
       var reqBody = RegisterRequest(
         Email: strEmail,
         Password: strPassword,
         PasswordConfirm: strPasswordConfirm,
         Username: strUsername
       );
-      print(jsonEncode(reqBody.toJson()));
-      var response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(reqBody.toJson()),
-      );
-      if (response.statusCode != 200) {
-        throw HttpException(response.statusCode, response.body);
-      }
 
-      var respJson = jsonDecode(response.body);
-      BaseResponse<RegisterResponse> apiResponse =
-      BaseResponse.fromJson(
-        respJson,
-            (json) => RegisterResponse.fromJson(
-          json as Map<String, dynamic>,
+      BaseResponse<RegisterResponse> apiResponse = BaseResponse.fromJson(
+        await RequestHandler.sendRequest(
+          reqBody,
+          URLEndpoint.loginEndpoint,
         ),
+            (json) => (RegisterResponse.fromJson(json as Map<String, dynamic>)),
       );
 
-      if (apiResponse.statusCode != 200) {
-        throw APIException(apiResponse.statusCode, apiResponse.statusMessage);
+      if (apiResponse.data?.sessionId == null) {
+        throw CustomException("session id is null");
       } else {
-        if (apiResponse.data?.sessionId == null) {
-          throw CustomException("session id is null");
-        } else {
-          final prefs =
-          await SharedPreferences.getInstance();
-          await prefs.setString(
-            'authToken',
-            apiResponse.data!.sessionId!,
-          );
-          if (mounted){
-            Navigator.pushReplacementNamed(context, "/dashboard");
-          }
-        }
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', apiResponse.data!.sessionId!);
+        if (mounted) Navigator.pushReplacementNamed(context, "/dashboard");
       }
     } catch (ex) {
       if(mounted)customErrorHandler(ex, context);
@@ -144,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(width: deviceWidth * 0.6,child:
-                  CustomButton.secondary(text: "Register", onPress: ()=>sendRegisterRequest())
+                  CustomButton.secondary(text: "Register", onPress: ()=>sendRegisterRequest(),isLoading: isLoading)
                     ,),
                   TextButton(onPressed: ()=>Navigator.pushNamed(context,"/login"), child: Text('Already Have An Account? Login Here', style: CustomText.text1(color: CustomColor.white), textAlign: TextAlign.center,))
                 ],

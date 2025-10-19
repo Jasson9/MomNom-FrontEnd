@@ -1,4 +1,5 @@
 import 'package:MomNom/etc/extensions.dart';
+import 'package:MomNom/model/exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,14 @@ void isAuthExist(context){
     }
   });
 }
+Future<void> isAuthExistAsync(context)async{
+  var e = await SharedPreferences.getInstance();
+  if(e.containsKey("authToken") == false || e.getString("authToken") == ""){
+    Navigator.pushReplacementNamed(context, "/login");
+    throw EmptyAuthException();
+  }
+}
+
 
 double getConstrainedWidth(BuildContext context, double decimalWidth, {double? minWidth, double? maxWidth} ){
   double deviceWidth = MediaQuery.sizeOf(context).width;

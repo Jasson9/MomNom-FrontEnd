@@ -1,4 +1,7 @@
+
 import 'package:json_annotation/json_annotation.dart';
+
+import 'base.dart';
 part 'plan.g.dart';
 @JsonSerializable()
 class Plan{
@@ -21,7 +24,7 @@ class Plan{
 }
 
 @JsonSerializable()
-class CreatePlanRequest{
+class CreatePlanRequest implements BaseRequest{
     String? DOBstring;
     int? age;
     double? height;

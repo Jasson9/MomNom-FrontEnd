@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'register.g.dart';
 
 @JsonSerializable()
-class RegisterRequest{
+class RegisterRequest implements BaseRequest{
   
     String? Password;
     String? Email;

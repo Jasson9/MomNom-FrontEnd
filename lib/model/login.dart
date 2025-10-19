@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'login.g.dart';
 
 @JsonSerializable()
-class LoginRequest{
+class LoginRequest implements BaseRequest{
   
     String? Password;
     String? Email;
@@ -21,4 +21,5 @@ class LoginResponse{
 
     factory LoginResponse.fromJson(Map<String, dynamic> json) => _$LoginResponseFromJson(json);
     Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
+
 }

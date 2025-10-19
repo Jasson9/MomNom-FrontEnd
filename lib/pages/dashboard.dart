@@ -31,13 +31,16 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   late Future<BaseResponse<DashboardResponse>> requestedData;
+  Key _refreshKey = UniqueKey();
+  int cnt = 1;
 
   Future<BaseResponse<DashboardResponse>> requestData() async {
     try {
+      await isAuthExistAsync(context);
       final prefs = await SharedPreferences.getInstance();
       final authToken = prefs.getString("authToken");
       var url = URLEndpoint.dashboardEndpoint;
-
+      print(cnt);
       var response = await http.post(
         url,
         headers: <String, String>{
@@ -45,6 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
           'authentication': authToken ?? "",
         },
       );
+      print("test");
 
       if (response.statusCode != 200)
         throw HttpException(response.statusCode, response.body);
@@ -61,9 +65,15 @@ class _DashboardPageState extends State<DashboardPage> {
           Navigator.pushReplacementNamed(context, "/createPlan");
         }
       }
+      // if (cnt == 1) {
+      //   setState(() {
+      //     cnt++;
+      //   });
+      //   throw "text exception";
+      // }
       return apiResponse;
     } catch (ex) {
-      if (mounted) customErrorHandler(ex, context);
+      if (mounted) throw customErrorHandler(ex, context);
     }
     return BaseResponse<DashboardResponse>(
       statusCode: 999,
@@ -74,7 +84,6 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    isAuthExist(context);
     requestedData = requestData();
   }
 
@@ -92,10 +101,13 @@ class _DashboardPageState extends State<DashboardPage> {
           width: deviceWidth,
           child: FutureBuilder<BaseResponse<DashboardResponse>>(
             future: requestedData,
+            key: _refreshKey,
             builder: (context, snapshot) {
-              print(snapshot.hasError.toString());
               if (snapshot.hasError) {
-                return Text('${snapshot.error}');
+                return errorWidget(snapshot, () {
+                  requestedData = requestData();
+                  setState(() {});
+                });
               }
 
               if (snapshot.hasData) {
@@ -759,7 +771,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 );
               }
 
-              return Center(child:const CircularProgressIndicator());
+              return Center(child: const CircularProgressIndicator());
             },
           ),
         ),

@@ -26,3 +26,7 @@ class ValidationException extends CustomException{
 class UnAuthorizedException extends CustomException{
   UnAuthorizedException() : super("User unauthorized, session expired or invalid credentials. Returning to Login.");
 }
+
+class EmptyAuthException extends CustomException{
+  EmptyAuthException() : super("");
+}

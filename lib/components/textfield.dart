@@ -96,6 +96,7 @@ class CustomTextField extends TextField {
     bool filled = true,
     bool withHeader = false,
     TextInputType? keyboardType,
+    
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

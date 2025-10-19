@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:MomNom/components/snackbar.dart';
 import 'package:MomNom/etc/errorHandler.dart';
+import 'package:MomNom/etc/requestHandler.dart';
 import 'package:MomNom/etc/utils.dart';
 import 'package:MomNom/model/exceptions.dart';
 import 'package:MomNom/model/plan.dart';
@@ -36,7 +37,6 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
       isLoading = true;
     });
     try {
-      // TODO: Loading Indicator
       if (height == 0) {
         throw ValidationException("Height cannot be 0");
       }
@@ -49,8 +49,6 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
       if (prePregnancyWeight == 0) {
         throw ValidationException("Pre-Pregnancy Weight cannot be 0");
       }
-      final prefs = await SharedPreferences.getInstance();
-      final authToken = prefs.getString("authToken");
 
       var reqBody = CreatePlanRequest(
         age: calculateAge(dob),
@@ -61,36 +59,16 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
         DOBstring: DateFormat('yyyy-MM-dd').format(dob),
       );
 
-      var response = await http.post(
+      var apiResponse = await RequestHandler.sendRequest<CreatePlanResponse>(
+        reqBody,
         URLEndpoint.createPlanEndpoint,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'authentication': authToken ?? ""
-        },
-        body: jsonEncode(reqBody.toJson()),
+        useAuth: true,
       );
 
-      if (response.statusCode != 200) {
-        throw HttpException(response.statusCode, response.body);
-      }
-
-      var respJson = jsonDecode(response.body);
-      BaseResponse<CreatePlanResponse> apiResponse = BaseResponse.fromJson(
-        respJson,
-        (json) => CreatePlanResponse.fromJson(json as Map<String, dynamic>),
-      );
-
-      if (apiResponse.statusCode != 200) {
-        throw APIException(
-          apiResponse.statusCode,
-          apiResponse.statusMessage,
-        );
+      if (apiResponse.data?.planId == null) {
+        throw CustomException("PlanId is null");
       } else {
-        if (apiResponse.data?.planId == null) {
-          throw CustomException("PlanId is null");
-        } else {
-          if (mounted) Navigator.pushReplacementNamed(context, "/dashboard");
-        }
+        if (mounted) Navigator.pushReplacementNamed(context, "/dashboard");
       }
     } catch (ex) {
       if (mounted) customErrorHandler(ex, context);

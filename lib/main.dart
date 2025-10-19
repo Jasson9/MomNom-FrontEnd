@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      initialRoute: '/',
+      initialRoute: '/dashboard',
       // routes: {
       //   for(var page in pages) page.routeName: (context) => page
       // },

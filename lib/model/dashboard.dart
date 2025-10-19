@@ -9,7 +9,8 @@ part 'dashboard.g.dart';
 class DashboardResponse{
     DashboardResponse({this.Username, this.plans});
     String? Username;
-  List<Plan>? plans;
+    List<Plan>? plans;
+
     factory DashboardResponse.fromJson(Map<String, dynamic> json) => _$DashboardResponseFromJson(json);
     Map<String, dynamic> toJson() => _$DashboardResponseToJson(this);
 }
