@@ -54,6 +54,13 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
     });
   }
 
+  void _deleteMultiTextField(int index) {
+    setState(() {
+      multiFieldTextController.removeAt(index);
+      multiFieldTextList.removeAt(index);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -121,15 +128,56 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
                   itemCount: multiFieldTextList.length + 1,
                   itemBuilder: (context, index) {
                     if (index == multiFieldTextList.length) {
-                      return SizedBox(
-                        width: 120,
+                      return Column(
+                        spacing: 8,
                         // padding:  const EdgeInsets.only(bottom:16.0),
-                        child: CustomButton.secondary(
-                          text: "Add New",
-                          colorFill: CustomColor.secondary,
-                          colorText: CustomColor.black,
-                          onPress: _addMultiTextField,
-                        ),
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 1,
+                                  color: CustomColor.gray,
+                                ),
+                              ),
+                              Container(
+                                width: 160,
+                                child: CustomButton.secondary(
+                                  text: "+ Add New",
+                                  colorFill: CustomColor.secondary,
+                                  colorText: CustomColor.black,
+                                  onPress: _addMultiTextField,
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 1,
+                                  color: CustomColor.gray,
+                                ),
+                              ),
+                            ],
+
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                "Are there scan results that don't match?",
+                                style: CustomText.textMd1(
+                                  color: CustomColor.black,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "Give us feedback here!",
+                                style: CustomText.textMd1(
+                                  color: CustomColor.black,
+                                  decor: TextDecoration.underline
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          )
+                        ],
                       );
                     }
                     return Padding(
@@ -140,6 +188,7 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
                         metrics: "gr",
                         controller1: multiFieldTextController[index][0],
                         controller2: multiFieldTextController[index][1],
+                        onDelete: () => _deleteMultiTextField(index),
                       ),
                       // Only show the remove button if there's more than one TextField
                     );
@@ -151,6 +200,9 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
                 colorFill: CustomColor.primary,
                 colorText: CustomColor.black,
                 horizontalPad: 80,
+                onPress: (){
+                  print(multiFieldTextController[0][0].text);
+                }
               ),
             ],
           ),

@@ -121,4 +121,16 @@ mixin CustomText {
     color: color,
     decoration: decor,
   );
+
+  static TextStyle textBg1({
+    Color color = CustomColor.white,
+    TextDecoration? decor,
+    bool? bold = false,
+  }) => TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: 42,
+    fontWeight: bold == true ? FontWeight.bold : FontWeight.normal,
+    color: color,
+    decoration: decor,
+  );
 }

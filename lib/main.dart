@@ -1,5 +1,6 @@
 import 'package:MomNom/pages/adddiaryPage.dart';
 import 'package:MomNom/components/button.dart';
+import 'package:MomNom/pages/exercisePage2.dart';
 import 'package:MomNom/pages/profilePage.dart';
 import 'package:MomNom/etc/transitions.dart';
 import 'package:MomNom/etc/utils.dart';
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
         '/createPlan': (context) => const CreatePlanPage(),
         '/dashboard': (context) => const DashboardPage(),
         '/diary': (context) => const DiaryPage(),
-        '/exercise': (context) => const ExercisePage(),
+        '/exercise': (context) => const ExercisePage2(),
         '/plan': (context) => const PlanPage(),
         DailyDiaryPage.routeName: (context) => const DailyDiaryPage(),
         AddDiaryPage.routeName: (context) => const AddDiaryPage(),

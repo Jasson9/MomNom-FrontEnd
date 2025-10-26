@@ -36,7 +36,7 @@ class __PopupState extends State<_Popup> {
           Column(
             spacing: 10,
             children: [
-              CustomTextField.dateTimeForm(context: context),
+              CustomTextField.dateTimeForm(context: context, outline: false),
               CustomTextField.grayMultiLines(placeholder: "Input Description"),
             ],
           ),
@@ -71,8 +71,7 @@ class __PopupState extends State<_Popup> {
 final popupKey = GlobalKey<CustomPopupState>();
 
 mixin CustomCard implements Card {
-
-  static Widget exerciseExpandedCard(){
+  static Widget exerciseExpandedCard() {
     CustomPopup popup = CustomPopup(
       showArrow: true,
       // key: popupKey,
@@ -83,7 +82,10 @@ mixin CustomCard implements Card {
         child: Text(
           textAlign: TextAlign.right,
           "Edit ->",
-          style: CustomText.text1(color: CustomColor.black,decor: TextDecoration.underline),
+          style: CustomText.text1(
+            color: CustomColor.black,
+            decor: TextDecoration.underline,
+          ),
         ),
       ),
     );
@@ -96,10 +98,7 @@ mixin CustomCard implements Card {
       child: ExpansionTile(
         title: Text(
           "2 August 2025 - Week 1",
-          style: CustomText.text1(
-            color: CustomColor.primaryDarker,
-            bold: true,
-          ),
+          style: CustomText.text1(color: CustomColor.primaryDarker, bold: true),
         ),
         // ,backgroundColor: CustomColor.secondary,collapsedBackgroundColor: CustomColor.secondary,
         shape: Border(),
@@ -111,8 +110,48 @@ mixin CustomCard implements Card {
               children: [
                 Text(
                   "description asdh askj dhaskj hdsakj hdakdjs ads da sdas das das das d asda",
-                ), popup
+                ),
+                popup,
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget exerciseExpandedCard2(
+    List<List<TextEditingController>> controllers,
+    VoidCallback? onAddItem,
+    ValueChanged<int>? onDeleteItem,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: CustomColor.secondary,
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+      child: ExpansionTile(
+        title: Text(
+          "2 August 2025 - Week 1",
+          style: CustomText.text1(color: CustomColor.primaryDarker, bold: true),
+        ),
+        // ,backgroundColor: CustomColor.secondary,collapsedBackgroundColor: CustomColor.secondary,
+        shape: Border(),
+        children: [
+          Container(
+            padding: EdgeInsets.all(12),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children:
+                  controllers.asMap().entries.map((e) {
+                    return CustomTextField().multiFieldInput2(
+                      onAdd: onAddItem,
+                      onDelete: ()=> onDeleteItem!(e.key),
+                      controller1: e.value[0],
+                      controller2: e.value[1],
+                    );
+                  }).toList(),
             ),
           ),
         ],
@@ -311,15 +350,28 @@ mixin CustomCard implements Card {
     );
   }
 
-  static Widget tipsCard(){
+  static Widget tipsCard() {
     return Container(
-      decoration: BoxDecoration(color: CustomColor.tertiary, border: Border.all(color: CustomColor.primary),borderRadius: BorderRadius.all(Radius.circular(12))),
+      decoration: BoxDecoration(
+        color: CustomColor.tertiary,
+        border: Border.all(color: CustomColor.primary),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
       width: 300,
       height: 120,
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       child: Column(
         children: [
-          Expanded(child: Text("“Effective stress management techniques can include practices such as deep breathing, yoga, meditation, progressive muscle relaxation, and journaling”",style: CustomText.text1(color: CustomColor.primaryDarker,bold: true),textAlign: TextAlign.center,))
+          Expanded(
+            child: Text(
+              "“Effective stress management techniques can include practices such as deep breathing, yoga, meditation, progressive muscle relaxation, and journaling”",
+              style: CustomText.text1(
+                color: CustomColor.primaryDarker,
+                bold: true,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );

@@ -8,7 +8,96 @@ import 'package:intl/intl.dart';
 
 class CustomTextField extends TextField {
   // List<TextEditingController> multiFieldInputControllers = [];
-
+  Widget multiFieldInput2({
+    String placeholder1 = "Exercise",
+    String placeholder2 = "min",
+    ValueChanged<String>? onChanged1,
+    ValueChanged<String>? onChanged2,
+    TextEditingController? controller1,
+    TextEditingController? controller2,
+    VoidCallback? onDelete,
+    VoidCallback? onAdd,
+  }){
+    return Row(
+      spacing: 4,
+      children: [
+        Expanded(
+          child: Container(
+            // height: 60,
+            child: TextField(
+              maxLines: 1,
+              onChanged: onChanged1,
+              style: CustomText.text1(color: CustomColor.black),
+              controller: controller1,
+              decoration: InputDecoration(
+                  hintText: placeholder1,
+                  fillColor: CustomColor.white,
+                  filled: true,
+                  hintStyle: CustomText.text1(color: CustomColor.darkGray),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(12))
+                  ),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 0,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(12))
+                  )
+              ),
+            ),
+          ),
+        ),
+        Container(
+          // height: 40,
+          width: 60,
+          child: TextField(
+            maxLines: 1,
+            textAlign: TextAlign.right,
+            style: CustomText.text1(color: CustomColor.black),
+            keyboardType: TextInputType.number,
+            onChanged: onChanged2,
+            controller: controller2,
+            decoration: InputDecoration(
+                hintText: "min",
+                fillColor: CustomColor.white,
+                filled: true,
+                hintStyle: CustomText.text1(color: CustomColor.darkGray),
+                border: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 0,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(12))
+                ),
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 0,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(12))
+                )
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              child:  IconButton(onPressed: onAdd, icon: Icon(Icons.add,size: 16,),),
+            ),
+            Container(
+              width: 32,
+              height: 32,
+              child:  IconButton(onPressed: onDelete, icon: Icon(Icons.remove,size: 16,)),
+            ),
+            // IconButton(onPressed: (){}, icon: Icon(Icons.remove)),
+          ],
+        )
+      ],
+    );
+  }
   Widget multiFieldInput({
     String placeholder1 = "Food Name",
     String placeholder2 = "Qty",
@@ -19,7 +108,10 @@ class CustomTextField extends TextField {
     TextEditingController? controller2,
     String placeholder = "placeholder",
     bool withHeader = false,
+    OutlineInputBorder? border,
+    VoidCallback? onDelete,
   }) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,6 +124,17 @@ class CustomTextField extends TextField {
         Row(
           spacing: 10,
           children: [
+            if(onDelete != null)
+              Container(
+                child: IconButton(onPressed: onDelete, icon: Icon(Icons.close)),
+                width:48,
+                height: 48,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  border: Border.all(color: CustomColor.primary, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             Expanded(
               flex: 1,
               child: TextField(
@@ -43,12 +146,19 @@ class CustomTextField extends TextField {
                     horizontal: 10.0,
                   ),
                   hintText: placeholder1,
+                  enabledBorder: border??OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: CustomColor.primary,
+                        width: 2
+                    ),
+                  ),
                   hintStyle: CustomText.text1(color: CustomColor.darkGray),
-                  border: OutlineInputBorder(
+                  border: border??OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
                       color: CustomColor.primary,
-                      width: 2,
+                      width: 2
                     ),
                   ),
                 ),
@@ -57,7 +167,7 @@ class CustomTextField extends TextField {
               ),
             ),
             SizedBox(
-              width: 72,
+              width: 64,
               child: TextField(
                 controller: controller2,
                 style: CustomText.text1(color: CustomColor.black),
@@ -67,8 +177,15 @@ class CustomTextField extends TextField {
                     horizontal: 10.0,
                   ),
                   hintText: placeholder2,
+                  enabledBorder: border??OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: CustomColor.primary,
+                        width: 2
+                    ),
+                  ),
                   hintStyle: CustomText.text1(color: CustomColor.darkGray),
-                  border: OutlineInputBorder(
+                  border: border ?? OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
                       color: CustomColor.primary,
@@ -96,7 +213,6 @@ class CustomTextField extends TextField {
     bool filled = true,
     bool withHeader = false,
     TextInputType? keyboardType,
-    
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,10 +339,10 @@ class CustomTextField extends TextField {
                   ),
                   maxLines: 1,
                   onChanged: (String e) {
-                    if (onChanged != null ) {
-                      if(e != ""){
+                    if (onChanged != null) {
+                      if (e != "") {
                         onChanged(int.parse(e));
-                      }else{
+                      } else {
                         onChanged(0);
                       }
                     }
@@ -259,10 +375,10 @@ class CustomTextField extends TextField {
     bool filled = true,
     String headerTitle = "",
     ValueChanged<DateTime>? onDateTimeChanged,
-    DateTime? value
+    DateTime? value,
   }) {
     print("called " + value.toString());
-    if(value == null){
+    if (value == null) {
       value = DateTime.now();
     }
     final TextEditingController _dateController = TextEditingController(
@@ -276,37 +392,33 @@ class CustomTextField extends TextField {
     );
 
     void dateFieldChange(String t) {
-
-      if(_yearController.value.text == ""){
-        _yearController.value =TextEditingValue(
-          text: "0",
-        );
+      if (_yearController.value.text == "") {
+        _yearController.value = TextEditingValue(text: "0");
       }
-      if(_monthController.value.text == ""){
-        _monthController.value =TextEditingValue(
-          text: "0",
-        );
+      if (_monthController.value.text == "") {
+        _monthController.value = TextEditingValue(text: "0");
       }
-      if(_dateController.value.text == ""){
-        _dateController.value =TextEditingValue(
-          text: "0",
-        );
+      if (_dateController.value.text == "") {
+        _dateController.value = TextEditingValue(text: "0");
       }
-      if (_yearController.value.text.startsWith('0') && _yearController.value.text.length > 1) {
+      if (_yearController.value.text.startsWith('0') &&
+          _yearController.value.text.length > 1) {
         final newValue = int.parse(_yearController.value.text).toString();
         _yearController.value = _yearController.value.copyWith(
           text: newValue,
           selection: TextSelection.collapsed(offset: newValue.length),
         );
       }
-      if (_monthController.value.text.startsWith('0') && _monthController.value.text.length > 1) {
+      if (_monthController.value.text.startsWith('0') &&
+          _monthController.value.text.length > 1) {
         final newValue = int.parse(_monthController.value.text).toString();
         _monthController.value = _monthController.value.copyWith(
           text: newValue,
           selection: TextSelection.collapsed(offset: newValue.length),
         );
       }
-      if (_dateController.value.text.startsWith('0') && _dateController.value.text.length > 1) {
+      if (_dateController.value.text.startsWith('0') &&
+          _dateController.value.text.length > 1) {
         final newValue = int.parse(_dateController.value.text).toString();
         _dateController.value = _dateController.value.copyWith(
           text: newValue,
@@ -314,7 +426,7 @@ class CustomTextField extends TextField {
         );
       }
 
-      if (int.parse(_dateController.value.text) > 31){
+      if (int.parse(_dateController.value.text) > 31) {
         final newValue = "31";
         _dateController.value = _dateController.value.copyWith(
           text: newValue,
@@ -322,7 +434,7 @@ class CustomTextField extends TextField {
         );
       }
 
-      if (int.parse(_monthController.value.text) > 12){
+      if (int.parse(_monthController.value.text) > 12) {
         final newValue = "12";
         _monthController.value = _monthController.value.copyWith(
           text: newValue,
@@ -345,9 +457,7 @@ class CustomTextField extends TextField {
       );
 
       if (onDateTimeChanged != null) {
-        onDateTimeChanged(
-          value!,
-        );
+        onDateTimeChanged(value!);
       }
     }
 

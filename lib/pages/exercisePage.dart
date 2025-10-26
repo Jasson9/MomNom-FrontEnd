@@ -48,7 +48,7 @@ class __PopupState extends State<_Popup> {
           Column(
             spacing: 10,
             children: [
-              CustomTextField.dateTimeForm(context: context),
+              CustomTextField.dateTimeForm(context: context, outline: false),
               CustomTextField.grayMultiLines(placeholder: "Input Description"),
             ],
           ),
