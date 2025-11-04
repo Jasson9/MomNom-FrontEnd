@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:MomNom/components/navbar.dart';
+import 'package:MomNom/components/snackbar.dart';
+import 'package:MomNom/model/addDiary.dart';
+import 'package:MomNom/model/foodDetection.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../components/card.dart';
+import '../etc/errorHandler.dart';
+import '../etc/requestHandler.dart';
 import '../etc/styles.dart';
 import '../components/textfield.dart';
 import '../components/button.dart';
@@ -11,6 +18,11 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+
+import '../etc/urlEndpoint.dart';
+import '../model/base.dart';
+import '../model/exceptions.dart';
+import 'dailydiaryPage.dart';
 
 class AddDiaryPage extends StatefulWidget {
   const AddDiaryPage({super.key});
@@ -41,6 +53,7 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
   List<List<TextEditingController>> multiFieldTextController = [];
   List<CustomTextField> multiFieldTextList = [];
   late AddDiaryArguments args;
+  bool isLoading = false;
 
   // _AddDiaryPageState({DailyDiaryArguments? args});
 
@@ -61,6 +74,59 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
     });
   }
 
+  void _saveFoodDiary() async {
+    if (isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
+    List<AddDiaryFoodItem> items = [];
+    try {
+      if (multiFieldTextController.length == 0) {
+        throw ValidationException("Add at least 1 food to save");
+      }
+      multiFieldTextController.forEach((e) {
+        var foodName = e[0].value.text;
+        var amt = e[1].value.text;
+
+        if (foodName.trim() == "") {
+          throw ValidationException("Food name should not be empty");
+        }
+
+        if (amt.trim() == "" || double.parse(amt) < 0) {
+          throw ValidationException("Amount should be more than 0");
+        }
+        items.add(
+          AddDiaryFoodItem(foodName: foodName, amountGr: double.parse(amt)),
+        );
+      });
+
+      AddDiaryRequest reqBody = AddDiaryRequest(args.addDate, items);
+
+      BaseResponse<AddDiaryResponse> apiResponse = BaseResponse.fromJson(
+        await RequestHandler.sendRequest(
+          item: reqBody,
+          url: URLEndpoint.addFoodDiary,
+          useAuth: true,
+        ),
+        (json) => (AddDiaryResponse.fromJson(json as Map<String, dynamic>)),
+      );
+
+      Navigator.pushNamed(
+        context,
+        DailyDiaryPage.routeName,
+        arguments: DailyDiaryArguments(
+          DateTime(args.addDate.year, args.addDate.month, args.addDate.day),
+        ),
+      );
+    } catch (ex) {
+      if (mounted) customErrorHandler(ex, context);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,27 +138,85 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
     bool isEmpty = false;
     final ImagePicker picker = ImagePicker();
     final result = await picker.pickImage(source: ImageSource.camera);
-    String foodName = "test";
+    var base64Data = "data:image/";
+    RegExp fileFormatRegex = RegExp(r"\.(.+)$");
+
+    if (result?.name == null) {
+      setState(() {
+        if (args.option == 2) args.option = 1;
+      });
+      throw Exception("Invalid Image Filename");
+    }
+    Match? match = fileFormatRegex.firstMatch(result!.name);
+
+    if (match == null || match.group(1) == null) {
+      setState(() {
+        if (args.option == 2) args.option = 1;
+      });
+      throw Exception("Invalid Image Format");
+    } else {
+      base64Data += match.group(1)!;
+      base64Data += ";base64,";
+    }
+
+    var imageBytes = await result.readAsBytes();
+    String base64Img = base64Encode(imageBytes);
+
+    base64Data += base64Img;
+    if (mounted) {
+      CustomSnackbar.showErrorSnackbar(
+        "Loading..., detecting food from image",
+        context,
+      );
+    }
     setState(() {
-      for (int i = 0; i < multiFieldTextController.length; i++) {
-        if (multiFieldTextController[i][0].value.text.isEmpty) {
-          isEmpty = true;
-          multiFieldTextController[i][0].value = TextEditingValue(
-            text: foodName,
-          );
-          break;
-        }
-      }
-      if (isEmpty == false) {
-        multiFieldTextController.add([
-          TextEditingController.fromValue(TextEditingValue(text: "test")),
-          TextEditingController(),
-        ]);
-        multiFieldTextList.add(CustomTextField());
-      }
       if (args.option == 2) {
         args.option = 1;
       }
+      isLoading = true;
+    });
+
+    try {
+      var apiResponse = BaseResponse.fromJson(
+        await RequestHandler.sendRequest(
+          item: FoodDetectionRequest(base64Data),
+          url: URLEndpoint.foodDetection,
+        ),
+        (json) =>
+            (FoodDetectionResponse.fromJson(json as Map<String, dynamic>)),
+      );
+
+      if (apiResponse.data!.foodNameList == null) {
+        throw CustomException("Food list empty");
+      }
+
+      List<String>? foodNames = apiResponse.data!.foodNameList;
+      print(foodNames);
+      setState(() {
+        foodNames?.forEach((e) {
+          isEmpty = false;
+          for (int i = 0; i < multiFieldTextController.length; i++) {
+            if (multiFieldTextController[i][0].value.text.isEmpty) {
+              isEmpty = true;
+              multiFieldTextController[i][0].value = TextEditingValue(text: e);
+              break;
+            }
+          }
+          if (isEmpty == false) {
+            multiFieldTextController.add([
+              TextEditingController.fromValue(TextEditingValue(text: e)),
+              TextEditingController(),
+            ]);
+            multiFieldTextList.add(CustomTextField());
+          }
+        });
+      });
+    } catch (ex) {
+      if (mounted) customErrorHandler(ex, context);
+    }
+
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -156,7 +280,6 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
                                 ),
                               ),
                             ],
-
                           ),
                           Column(
                             children: [
@@ -171,12 +294,12 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
                                 "Give us feedback here!",
                                 style: CustomText.textMd1(
                                   color: CustomColor.black,
-                                  decor: TextDecoration.underline
+                                  decor: TextDecoration.underline,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
                             ],
-                          )
+                          ),
                         ],
                       );
                     }
@@ -200,9 +323,10 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
                 colorFill: CustomColor.primary,
                 colorText: CustomColor.black,
                 horizontalPad: 80,
-                onPress: (){
-                  print(multiFieldTextController[0][0].text);
-                }
+                isLoading: isLoading,
+                onPress: () {
+                  _saveFoodDiary();
+                },
               ),
             ],
           ),

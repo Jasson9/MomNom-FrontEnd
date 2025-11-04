@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_popup/flutter_popup.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'button.dart';
 import '../etc/styles.dart';
 import 'package:intl/intl.dart';
@@ -120,21 +121,30 @@ mixin CustomCard implements Card {
     );
   }
 
-  static Widget exerciseExpandedCard2(
-    List<List<TextEditingController>> controllers,
+  static Widget exerciseExpandedCard2({
+    required List<List<TextEditingController>> controllers,
     VoidCallback? onAddItem,
     ValueChanged<int>? onDeleteItem,
-  ) {
+    required DateTime date,
+    required BuildContext context,
+    required ValueChanged<DateTime> onDateChange,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: CustomColor.secondary,
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       child: ExpansionTile(
-        title: Text(
-          "2 August 2025 - Week 1",
-          style: CustomText.text1(color: CustomColor.primaryDarker, bold: true),
+        title: CustomTextField.dateTimeForm(
+          context: context,
+          filled: true,
+          value: date,
+          onDateTimeChanged: onDateChange,
         ),
+        // Text(
+        //   "2 August 2025 - Week 1",
+        //   style: CustomText.text1(color: CustomColor.primaryDarker, bold: true),
+        // ),
         // ,backgroundColor: CustomColor.secondary,collapsedBackgroundColor: CustomColor.secondary,
         shape: Border(),
         children: [
@@ -147,7 +157,7 @@ mixin CustomCard implements Card {
                   controllers.asMap().entries.map((e) {
                     return CustomTextField().multiFieldInput2(
                       onAdd: onAddItem,
-                      onDelete: ()=> onDeleteItem!(e.key),
+                      onDelete: () => onDeleteItem!(e.key),
                       controller1: e.value[0],
                       controller2: e.value[1],
                     );
@@ -159,7 +169,21 @@ mixin CustomCard implements Card {
     );
   }
 
-  static Container dailyFoodDiary3x2({required double deviceWidth}) {
+
+  static Container dailyFoodDiary3x2({
+    required double deviceWidth,
+    required List<Nutrient> nutrients,
+    required String foodName,
+    required double amount
+  }) {
+
+    Nutrient? calorie = nutrients.where((e) => e.nutrientName == "Calorie").firstOrNull;
+    Nutrient? protein = nutrients.where((e)=>e.nutrientName == "Protein").firstOrNull;
+    Nutrient? iron = nutrients.where((e)=>e.nutrientName == "Iron").firstOrNull;
+    Nutrient? carbohydrate = nutrients.where((e)=>e.nutrientName == "Carbohydrate").firstOrNull;
+    Nutrient? fiber = nutrients.where((e)=>e.nutrientName == "Fiber").firstOrNull;
+    Nutrient? calcium = nutrients.where((e)=>e.nutrientName == "Calcium").firstOrNull;
+
     return Container(
       width: deviceWidth * 0.9,
       padding: EdgeInsets.all(16),
@@ -173,7 +197,7 @@ mixin CustomCard implements Card {
           SizedBox(
             width: deviceWidth * 0.8,
             child: Text(
-              "Chicken Breast",
+              "${foodName} - ${amount.round()}gr",
               textAlign: TextAlign.left,
               style: CustomText.subHeading3(color: CustomColor.tertiary),
             ),
@@ -202,7 +226,8 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX kcal",
+                            "${calorie?.amount ?? ""} ${calorie?.unit ?? ""}",
+                            // "",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -230,7 +255,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${protein?.amount ?? ""} ${protein?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -245,14 +270,14 @@ mixin CustomCard implements Card {
                       child: Column(
                         children: [
                           Text(
-                            "Vitamin",
+                            "Iron",
                             style: CustomText.text1(
                               color: CustomColor.white,
                               bold: true,
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${iron?.amount ?? ""} ${iron?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -281,7 +306,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${carbohydrate?.amount ?? ""} ${carbohydrate?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -309,7 +334,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${fiber?.amount ?? ""} ${fiber?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -331,7 +356,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${calcium?.amount ?? ""} ${calcium?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -350,7 +375,7 @@ mixin CustomCard implements Card {
     );
   }
 
-  static Widget tipsCard() {
+  static Widget tipsCard(String text) {
     return Container(
       decoration: BoxDecoration(
         color: CustomColor.tertiary,
@@ -358,18 +383,20 @@ mixin CustomCard implements Card {
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       width: 300,
-      height: 120,
+      height: 160,
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       child: Column(
         children: [
           Expanded(
-            child: Text(
-              "“Effective stress management techniques can include practices such as deep breathing, yoga, meditation, progressive muscle relaxation, and journaling”",
-              style: CustomText.text1(
-                color: CustomColor.primaryDarker,
-                bold: true,
+            child: SingleChildScrollView(
+              child: Text(
+                "“$text”",
+                style: CustomText.text1(
+                  color: CustomColor.primaryDarker,
+                  bold: true,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -616,17 +643,17 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.calorie?.name ?? "",
+                                    diaryWeek.nutrients.calorie?.nutrientName ?? "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
                                       bold: true,
                                     ),
                                   ),
                                   Text(
-                                    (diaryWeek.nutrients.calorie?.value
+                                    (diaryWeek.nutrients.calorie?.amount
                                                 .toString() ??
                                             "") +
-                                        " ${diaryWeek.nutrients.calorie?.metric ?? ""}",
+                                        " ${diaryWeek.nutrients.calorie?.unit ?? ""}",
                                     style: CustomText.text1(
                                       color: CustomColor.white,
                                       bold: true,
@@ -637,17 +664,17 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.protein?.name ?? "",
+                                    diaryWeek.nutrients.protein?.nutrientName ?? "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
                                       bold: true,
                                     ),
                                   ),
                                   Text(
-                                    (diaryWeek.nutrients.protein?.value
+                                    (diaryWeek.nutrients.protein?.amount
                                                 .toString() ??
                                             "") +
-                                        " ${diaryWeek.nutrients.protein?.metric ?? ""}",
+                                        " ${diaryWeek.nutrients.protein?.unit ?? ""}",
                                     style: CustomText.text1(
                                       color: CustomColor.white,
                                       bold: true,
@@ -663,7 +690,7 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.carbohydrate?.name ??
+                                    diaryWeek.nutrients.carbohydrate?.nutrientName ??
                                         "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
@@ -671,10 +698,10 @@ mixin CustomCard implements Card {
                                     ),
                                   ),
                                   Text(
-                                    (diaryWeek.nutrients.carbohydrate?.value
+                                    (diaryWeek.nutrients.carbohydrate?.amount
                                                 .toString() ??
                                             "") +
-                                        " ${diaryWeek.nutrients.carbohydrate?.metric ?? ""}",
+                                        " ${diaryWeek.nutrients.carbohydrate?.unit ?? ""}",
                                     style: CustomText.text1(
                                       color: CustomColor.white,
                                       bold: true,
@@ -685,17 +712,17 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.fiber?.name ?? "",
+                                    diaryWeek.nutrients.fiber?.nutrientName ?? "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
                                       bold: true,
                                     ),
                                   ),
                                   Text(
-                                    (diaryWeek.nutrients.fiber?.value
+                                    (diaryWeek.nutrients.fiber?.amount
                                                 .toString() ??
                                             "") +
-                                        " ${diaryWeek.nutrients.fiber?.metric ?? ""}",
+                                        " ${diaryWeek.nutrients.fiber?.unit ?? ""}",
                                     style: CustomText.text1(
                                       color: CustomColor.white,
                                       bold: true,

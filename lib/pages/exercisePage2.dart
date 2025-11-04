@@ -20,6 +20,7 @@ class ExercisePage2 extends StatefulWidget {
 
 class _ExercisePage2State extends State<ExercisePage2> {
   List<List<List<TextEditingController>>> multiFieldTextController = [];
+  List<DateTime> cardDates = [];
 
   @override
   void initState() {
@@ -38,14 +39,15 @@ class _ExercisePage2State extends State<ExercisePage2> {
     });
   }
 
-  void _addWeekCard(){
+  void _addWeekCard() {
     setState(() {
       multiFieldTextController.add([]);
-      multiFieldTextController[multiFieldTextController.length-1].add([
+      multiFieldTextController[multiFieldTextController.length - 1].add([
         TextEditingController(),
         TextEditingController(),
       ]);
-      print("length "+ multiFieldTextController.length.toString());
+      cardDates.add(DateTime.now());
+      print("length " + multiFieldTextController.length.toString());
     });
   }
 
@@ -55,7 +57,6 @@ class _ExercisePage2State extends State<ExercisePage2> {
       multiFieldTextController[indexWeek].removeAt(index);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -205,30 +206,84 @@ class _ExercisePage2State extends State<ExercisePage2> {
                                         children: [
                                           Table(
                                             columnWidths: {
-                                              0:FlexColumnWidth(0.7),
-                                              1:FlexColumnWidth(0.15),
-                                              2:FlexColumnWidth(0.15)
+                                              0: FlexColumnWidth(0.7),
+                                              1: FlexColumnWidth(0.15),
+                                              2: FlexColumnWidth(0.15),
                                             },
                                             children: [
                                               TableRow(
                                                 children: [
-                                                  Text("Exercise 1", style: CustomText.text1(color: CustomColor.black, bold: true),),
-                                                  Text("XX", style: CustomText.text1(color: CustomColor.black, bold: true)),
-                                                  Text("min", style: CustomText.text1(color: CustomColor.black, bold: true)),
+                                                  Text(
+                                                    "Exercise 1",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "XX",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "min",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                               TableRow(
                                                 children: [
-                                                  Text("Exercise 2", style: CustomText.text1(color: CustomColor.black, bold: true)),
-                                                  Text("XX", style: CustomText.text1(color: CustomColor.black, bold: true)),
-                                                  Text("min", style: CustomText.text1(color: CustomColor.black, bold: true)),
+                                                  Text(
+                                                    "Exercise 2",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "XX",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "min",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                               TableRow(
                                                 children: [
-                                                  Text("Exercise 3", style: CustomText.text1(color: CustomColor.black, bold: true)),
-                                                  Text("XX", style: CustomText.text1(color: CustomColor.black, bold: true)),
-                                                  Text("min", style: CustomText.text1(color: CustomColor.black, bold: true)),
+                                                  Text(
+                                                    "Exercise 3",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "XX",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "min",
+                                                    style: CustomText.text1(
+                                                      color: CustomColor.black,
+                                                      bold: true,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ],
@@ -246,9 +301,22 @@ class _ExercisePage2State extends State<ExercisePage2> {
                       // CustomCard.exerciseExpandedCard2(),
                       Column(
                         spacing: 16,
-                        children: multiFieldTextController.asMap().entries.map((e){
-                          return CustomCard.exerciseExpandedCard2(e.value, ()=>_addMultiTextField(e.key), (d)=>_deleteMultiTextField(e.key,d));
-                        }).toList(),
+                        children:
+                            multiFieldTextController.asMap().entries.map((e) {
+                              return CustomCard.exerciseExpandedCard2(
+                                controllers: e.value,
+                                onAddItem: () => _addMultiTextField(e.key),
+                                onDeleteItem:
+                                    (d) => _deleteMultiTextField(e.key, d),
+                                context: context,
+                                date: cardDates[e.key],
+                                onDateChange: (value) {
+                                  setState(() {
+                                    cardDates[e.key] = value;
+                                  });
+                                },
+                              );
+                            }).toList(),
                       ),
                       Row(
                         children: [
@@ -274,20 +342,17 @@ class _ExercisePage2State extends State<ExercisePage2> {
                             ),
                           ),
                         ],
-
                       ),
                       CustomButton.secondary(
-                          text: "Save",
-                          colorFill: CustomColor.primary,
-                          colorText: CustomColor.black,
-                          horizontalPad: 80,
-                          onPress: (){
-                          }
-                      )
+                        text: "Save",
+                        colorFill: CustomColor.primary,
+                        colorText: CustomColor.black,
+                        horizontalPad: 80,
+                        onPress: () {},
+                      ),
                     ],
                   ),
                 ),
-
               ],
             ),
           ),

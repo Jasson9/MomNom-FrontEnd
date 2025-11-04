@@ -10,4 +10,8 @@ class URLEndpoint {
   static Uri get createPlanEndpoint => baseUrl.toUri("/CreatePlan");
   static Uri get seePlanEndpoint => baseUrl.toUri("/seePlan");
   static Uri get dashboardEndpoint => baseUrl.toUri("/Dashboard");
+  static Uri get weeklyLogReport => baseUrl.toUri("/WeeklyLogReport");
+  static Uri get dailyCalorieLog => baseUrl.toUri("/DailyCalorieLog");
+  static Uri get addFoodDiary => baseUrl.toUri("/AddFoodDiary");
+  static Uri get foodDetection => baseUrl.toUri("/FoodDetection");
 }

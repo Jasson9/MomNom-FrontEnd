@@ -59,10 +59,12 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
         DOBstring: DateFormat('yyyy-MM-dd').format(dob),
       );
 
-      var apiResponse = await RequestHandler.sendRequest<CreatePlanResponse>(
-        reqBody,
-        URLEndpoint.createPlanEndpoint,
-        useAuth: true,
+      BaseResponse<CreatePlanResponse> apiResponse = BaseResponse.fromJson(
+        await RequestHandler.sendRequest(
+          item: reqBody,
+          url: URLEndpoint.createPlanEndpoint,
+        ),
+            (json) => (CreatePlanResponse.fromJson(json as Map<String, dynamic>)),
       );
 
       if (apiResponse.data?.planId == null) {
@@ -220,6 +222,7 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
                     child: CustomButton.secondary(
                       text: "Create Plan!",
                       onPress: _createPlanButtonPressed,
+                      isLoading: isLoading
                     ),
                   ),
                 ],

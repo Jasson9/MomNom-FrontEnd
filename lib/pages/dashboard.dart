@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:MomNom/components/navbar.dart';
 import 'package:MomNom/etc/errorHandler.dart';
+import 'package:MomNom/etc/tips.dart';
 import 'package:MomNom/model/dashboard.dart';
 import 'package:MomNom/model/exceptions.dart';
 import 'package:MomNom/pages/exercisePage.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/card.dart';
+import '../etc/requestHandler.dart';
 import '../etc/styles.dart';
 import '../components/card.dart';
 import '../etc/styles.dart';
@@ -32,53 +34,25 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late Future<BaseResponse<DashboardResponse>> requestedData;
   Key _refreshKey = UniqueKey();
-  int cnt = 1;
 
   Future<BaseResponse<DashboardResponse>> requestData() async {
     try {
       await isAuthExistAsync(context);
-      final prefs = await SharedPreferences.getInstance();
-      final authToken = prefs.getString("authToken");
-      var url = URLEndpoint.dashboardEndpoint;
-      print(cnt);
-      var response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'authentication': authToken ?? "",
-        },
+      BaseResponse<DashboardResponse> response = BaseResponse.fromJson(
+        await RequestHandler.sendRequest(
+          url: URLEndpoint.dashboardEndpoint,
+          useAuth: true
+        ),
+            (json) => (DashboardResponse.fromJson(json as Map<String, dynamic>)),
       );
-      print("test");
 
-      if (response.statusCode != 200)
-        throw HttpException(response.statusCode, response.body);
-
-      var respJson = jsonDecode(response.body);
-      BaseResponse<DashboardResponse> apiResponse = BaseResponse.fromJson(
-        respJson,
-        (json) => DashboardResponse.fromJson(json as Map<String, dynamic>),
-      );
-      if (apiResponse.statusCode != 200) {
-        throw APIException(apiResponse.statusCode, apiResponse.statusMessage);
-      } else {
-        if (apiResponse.data!.plans!.isEmpty && mounted) {
-          Navigator.pushReplacementNamed(context, "/createPlan");
-        }
+      if (response.data!.plans!.isEmpty && mounted) {
+        Navigator.pushReplacementNamed(context, "/createPlan");
       }
-      // if (cnt == 1) {
-      //   setState(() {
-      //     cnt++;
-      //   });
-      //   throw "text exception";
-      // }
-      return apiResponse;
+      return response;
     } catch (ex) {
-      if (mounted) throw customErrorHandler(ex, context);
+      throw customErrorHandler(ex, context);
     }
-    return BaseResponse<DashboardResponse>(
-      statusCode: 999,
-      statusMessage: "Fatal error",
-    );
   }
 
   @override
@@ -693,7 +667,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                             ),
                             Container(
-                              height: 160,
+                              height: 200,
                               margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
                               child: Column(
                                 children: [
@@ -709,50 +683,36 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 100,
+                                    height: 140,
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
                                         Column(
                                           children: [
                                             SizedBox(
-                                              height: 100,
+                                              height: 140,
                                               child: ListView(
                                                 shrinkWrap: true,
                                                 scrollDirection:
                                                     Axis.horizontal,
-                                                children: [
-                                                  Container(
-                                                    margin: EdgeInsets.fromLTRB(
-                                                      0,
-                                                      0,
-                                                      8,
-                                                      0,
-                                                    ),
-                                                    child:
-                                                        CustomCard.tipsCard(),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.fromLTRB(
-                                                      0,
-                                                      0,
-                                                      8,
-                                                      0,
-                                                    ),
-                                                    child:
-                                                        CustomCard.tipsCard(),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.fromLTRB(
-                                                      0,
-                                                      0,
-                                                      8,
-                                                      0,
-                                                    ),
-                                                    child:
-                                                        CustomCard.tipsCard(),
-                                                  ),
-                                                ],
+                                                children:
+                                                    Tips.getRandomTips().map((
+                                                      e,
+                                                    ) {
+                                                      return Container(
+                                                        margin:
+                                                            EdgeInsets.fromLTRB(
+                                                              0,
+                                                              0,
+                                                              8,
+                                                              0,
+                                                            ),
+                                                        child:
+                                                            CustomCard.tipsCard(
+                                                              e,
+                                                            ),
+                                                      );
+                                                    }).toList(),
                                               ),
                                             ),
                                           ],

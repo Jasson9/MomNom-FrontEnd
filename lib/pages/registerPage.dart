@@ -60,8 +60,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
       BaseResponse<RegisterResponse> apiResponse = BaseResponse.fromJson(
         await RequestHandler.sendRequest(
-          reqBody,
-          URLEndpoint.loginEndpoint,
+          item: reqBody,
+          url: URLEndpoint.registerEndpoint,
         ),
             (json) => (RegisterResponse.fromJson(json as Map<String, dynamic>)),
       );

@@ -15,7 +15,9 @@ import 'package:fl_chart/fl_chart.dart';
 
 class PlanPage extends StatefulWidget {
   const PlanPage({super.key});
+
   static String routeName = "/plan";
+
   @override
   State<PlanPage> createState() => _PlanPageState();
 }
@@ -27,21 +29,34 @@ class PlanArguments {
 }
 
 class _Popup extends StatefulWidget {
-  _Popup({required this.selectedMonth, required this.popupKey});
+  _Popup({
+    required this.selectedMonth,
+    required this.popupKey,
+    required this.selectedYear,
+  });
 
   String selectedMonth =
       DateFormat().dateSymbols.MONTHS[DateTime.now().month - 1];
+  int selectedYear = DateTime.now().year;
   GlobalKey<CustomPopupState> popupKey;
 
   @override
-  State<_Popup> createState() =>
-      __PopupState(selectedMonth: selectedMonth, popupKey: popupKey);
+  State<_Popup> createState() => __PopupState(
+    selectedMonth: selectedMonth,
+    popupKey: popupKey,
+    selectedYear: selectedYear,
+  );
 }
 
 class __PopupState extends State<_Popup> {
-  __PopupState({required this.selectedMonth, required this.popupKey});
+  __PopupState({
+    required this.selectedMonth,
+    required this.popupKey,
+    required this.selectedYear,
+  });
 
   String selectedMonth;
+  int selectedYear;
   GlobalKey<CustomPopupState> popupKey;
 
   @override
@@ -63,13 +78,29 @@ class __PopupState extends State<_Popup> {
               CustomDropdown.dropdown(
                 DateFormat().dateSymbols.MONTHS,
                 selectedMonth,
-                    (val) {
+                (val) {
                   setState(() {
                     selectedMonth = val!;
                   });
                 },
               ),
-              CustomTextField.inputWithMetrics(placeholder: 40, metricsText: "kg"),
+              CustomDropdown.dropdown(
+                [
+                  (DateTime.now().year - 1).toString(),
+                  DateTime.now().year.toString(),
+                  (DateTime.now().year + 1).toString(),
+                ],
+                selectedYear.toString(),
+                (val) {
+                  setState(() {
+                    selectedYear = int.parse(val ?? "");
+                  });
+                },
+              ),
+              CustomTextField.inputWithMetrics(
+                placeholder: 40,
+                metricsText: "kg",
+              ),
             ],
           ),
           Expanded(
@@ -112,6 +143,7 @@ class _PlanPageState extends State<PlanPage> {
   int tabOption = 1;
   String selectedMonth =
       DateFormat().dateSymbols.MONTHS[DateTime.now().month - 1];
+  int selectedYear = DateTime.now().year;
 
   BarChartGroupData makeGroupData(int x, double y1, double y2) {
     return BarChartGroupData(
@@ -143,7 +175,8 @@ class _PlanPageState extends State<PlanPage> {
 
   List<LineChartBarData> createLineCharBarData(
     List<double> progressData,
-    List<double> goalData,
+    double startingWeight,
+    double finaltargetWeight,
   ) {
     int i1 = 1;
     int i2 = 1;
@@ -178,12 +211,7 @@ class _PlanPageState extends State<PlanPage> {
           return FlDotCirclePainter(radius: 8, color: CustomColor.primaryDark);
         },
       ),
-      spots:
-          goalData.map((e) {
-            FlSpot res = FlSpot((i2.toDouble()), e);
-            i2++;
-            return res;
-          }).toList(),
+      spots: [FlSpot((1), startingWeight), FlSpot((9), finaltargetWeight)],
     );
 
     return [progressChartData, goalChartData];
@@ -194,10 +222,11 @@ class _PlanPageState extends State<PlanPage> {
 
   Widget monthlyWeight(BuildContext context, double deviceWidth) {
     List<double> progressData = [40, 42, 44, 45, 45, 46, 46, 47, 48];
-    List<double> goalData = [40, 41, 42, 44, 45, 46, 47, 48, 48];
+    // List<double> goalData = [40, 41, 42, 44, 45, 46, 47, 48, 48];
     List<LineChartBarData> chartData = createLineCharBarData(
       progressData,
-      goalData,
+      40,
+      48,
     );
 
     CustomPopup popup = CustomPopup(
@@ -206,7 +235,11 @@ class _PlanPageState extends State<PlanPage> {
       anchorKey: anchorKey,
       arrowColor: CustomColor.tertiary,
       backgroundColor: CustomColor.tertiary,
-      content: _Popup(selectedMonth: selectedMonth, popupKey: popupKey),
+      content: _Popup(
+        selectedMonth: selectedMonth,
+        popupKey: popupKey,
+        selectedYear: selectedYear,
+      ),
       child: Text(
         "+ Add new weight here!",
         style: CustomText.textMd1(
@@ -327,10 +360,13 @@ class _PlanPageState extends State<PlanPage> {
                         tooltipMargin: 0,
                         getTooltipItems: (e) {
                           return e.map((e) {
+                            if (e.x.toInt() - 1 == 0) {
+                              return LineTooltipItem("", TextStyle());
+                            }
                             int val = 0;
                             int idx = e.x.toInt();
                             val =
-                                (progressData[idx - 1] - goalData[idx - 1])
+                                (progressData[idx - 1] - progressData[idx - 2])
                                     .round();
                             return LineTooltipItem(
                               (val >= 0 ? "+" : "") + val.toString() + " kg",
@@ -367,7 +403,11 @@ class _PlanPageState extends State<PlanPage> {
       children: [
         Container(
           width: deviceWidth,
-          child: DayWeekPicker.type1(paramDate: args.date, setDate: changeDate, devicedWidth: deviceWidth),
+          child: DayWeekPicker.type1(
+            paramDate: args.date,
+            setDate: changeDate,
+            devicedWidth: deviceWidth,
+          ),
         ),
         Container(
           width: deviceWidth * 0.9,
@@ -423,10 +463,7 @@ class _PlanPageState extends State<PlanPage> {
                     borderData: FlBorderData(
                       border: Border(
                         left: BorderSide(color: CustomColor.gray, width: 2),
-                        bottom: BorderSide(
-                          color: CustomColor.gray,
-                          width: 2,
-                        ),
+                        bottom: BorderSide(color: CustomColor.gray, width: 2),
                       ),
                     ),
                     maxY: maxValue + 25,
@@ -542,7 +579,9 @@ class _PlanPageState extends State<PlanPage> {
 
   void changeDate(DateTime val) {
     Navigator.pushReplacementNamed(
-      context,"/plan",arguments: PlanArguments(date: val)
+      context,
+      "/plan",
+      arguments: PlanArguments(date: val),
     );
   }
 

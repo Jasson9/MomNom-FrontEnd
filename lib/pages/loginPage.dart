@@ -66,8 +66,8 @@ class _LoginPageState extends State<LoginPage> {
       var reqBody = LoginRequest(Email: strEmail, Password: strPassword);
       BaseResponse<LoginResponse> apiResponse = BaseResponse.fromJson(
         await RequestHandler.sendRequest(
-          reqBody,
-          URLEndpoint.loginEndpoint,
+          item: reqBody,
+          url: URLEndpoint.loginEndpoint,
         ),
         (json) => (LoginResponse.fromJson(json as Map<String, dynamic>)),
       );

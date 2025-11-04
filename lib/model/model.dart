@@ -1,9 +1,16 @@
-class Nutrient {
-  Nutrient({required this.name, required this.value, required this.metric});
+import 'package:json_annotation/json_annotation.dart';
+part 'model.g.dart';
 
-  final String name;
-  final int value;
-  final String metric;
+@JsonSerializable()
+class Nutrient {
+  Nutrient({required this.nutrientName, required this.amount, required this.unit});
+
+  final String nutrientName;
+  final double amount;
+  final String unit;
+
+  factory Nutrient.fromJson(Map<String, dynamic> json) => _$NutrientFromJson(json);
+  Map<String, dynamic> toJson() => _$NutrientToJson(this);
 }
 
 class AllNutrients {
