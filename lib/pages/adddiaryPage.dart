@@ -182,8 +182,8 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
           item: FoodDetectionRequest(base64Data),
           url: URLEndpoint.foodDetection,
         ),
-        (json) =>
-            (FoodDetectionResponse.fromJson(json as Map<String, dynamic>)),
+            (json) =>
+        (FoodDetectionResponse.fromJson(json as Map<String, dynamic>)),
       );
 
       if (apiResponse.data!.foodNameList == null) {

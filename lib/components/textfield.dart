@@ -296,7 +296,7 @@ class CustomTextField extends TextField {
   static Widget inputWithMetrics({
     int placeholder = 0,
     String metricsText = "kg",
-    ValueChanged<int>? onChanged,
+    ValueChanged<double>? onChanged,
     ValueChanged<String>? onSubmitted,
     bool outline = false,
     bool filled = true,
@@ -341,7 +341,7 @@ class CustomTextField extends TextField {
                   onChanged: (String e) {
                     if (onChanged != null) {
                       if (e != "") {
-                        onChanged(int.parse(e));
+                        onChanged(double.parse(e));
                       } else {
                         onChanged(0);
                       }

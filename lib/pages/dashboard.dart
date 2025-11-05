@@ -41,9 +41,9 @@ class _DashboardPageState extends State<DashboardPage> {
       BaseResponse<DashboardResponse> response = BaseResponse.fromJson(
         await RequestHandler.sendRequest(
           url: URLEndpoint.dashboardEndpoint,
-          useAuth: true
+          useAuth: true,
         ),
-            (json) => (DashboardResponse.fromJson(json as Map<String, dynamic>)),
+        (json) => (DashboardResponse.fromJson(json as Map<String, dynamic>)),
       );
 
       if (response.data!.plans!.isEmpty && mounted) {
@@ -85,6 +85,24 @@ class _DashboardPageState extends State<DashboardPage> {
               }
 
               if (snapshot.hasData) {
+                var data = snapshot.data!.data;
+                var calorieNeeded =
+                    data?.remainingNutritions
+                        ?.where((e) => e.nutrientName == "Calorie")
+                        .firstOrNull;
+                var proteinNeeded =
+                    data?.remainingNutritions
+                        ?.where((e) => e.nutrientName == "Protein")
+                        .firstOrNull;
+                var carbohydrateNeeded =
+                    data?.remainingNutritions
+                        ?.where((e) => e.nutrientName == "Carbohydrate")
+                        .firstOrNull;
+                var fiberNeeded =
+                    data?.remainingNutritions
+                        ?.where((e) => e.nutrientName == "Fiber")
+                        .firstOrNull;
+                print(data?.dailyLogs);
                 return SingleChildScrollView(
                   child: Column(
                     spacing: 18,
@@ -107,7 +125,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Hello, Jane!",
+                                  "Hello, ${data?.username ?? ""}!",
                                   style: CustomText.subHeading1(
                                     color: CustomColor.primaryDarker,
                                   ),
@@ -208,7 +226,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "20 kcal",
+                                                      "${calorieNeeded?.remainingNutrient ?? 0} ${calorieNeeded?.unit ?? "kcal"}",
                                                       style: CustomText.text1(
                                                         color:
                                                             CustomColor
@@ -236,7 +254,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "6 gr",
+                                                      "${proteinNeeded?.remainingNutrient ?? 0} ${proteinNeeded?.unit ?? "g"}",
                                                       style: CustomText.text1(
                                                         color:
                                                             CustomColor
@@ -264,7 +282,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "115 gr",
+                                                      "${carbohydrateNeeded?.remainingNutrient ?? 0} ${carbohydrateNeeded?.unit ?? "g"}",
                                                       style: CustomText.text1(
                                                         color:
                                                             CustomColor
@@ -292,7 +310,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "6 gr",
+                                                      "${fiberNeeded?.remainingNutrient ?? 0} ${fiberNeeded?.unit ?? "g"}",
                                                       style: CustomText.text1(
                                                         color:
                                                             CustomColor
@@ -306,11 +324,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                           ),
                                         ),
                                         Container(
-                                          width: getConstrainedWidth(
-                                            context,
-                                            0.40,
-                                            minWidth: 120,
-                                          ),
                                           margin: EdgeInsets.fromLTRB(
                                             8,
                                             0,
@@ -330,11 +343,11 @@ class _DashboardPageState extends State<DashboardPage> {
                                           child: Column(
                                             spacing: 4,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Container(
                                                 child: Text(
-                                                  "December",
+                                                  "${data?.currWeightGain?.monthYear}",
                                                   style: CustomText.text1(
                                                     color: CustomColor.black,
                                                     bold: true,
@@ -344,44 +357,44 @@ class _DashboardPageState extends State<DashboardPage> {
                                               Expanded(
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     Container(
-                                                      width: 70,
+                                                      // width: 80,
                                                       padding:
-                                                          EdgeInsets.symmetric(
-                                                            // horizontal: 10,
-                                                            vertical: 24,
-                                                          ),
+                                                      EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 24,
+                                                      ),
                                                       child: Column(
                                                         spacing: 8,
                                                         children: [
                                                           Text(
-                                                            "Goal",
+                                                            "Progress",
                                                             style: CustomText.text1(
                                                               color:
-                                                                  CustomColor
-                                                                      .primaryDarker,
+                                                              CustomColor
+                                                                  .primaryDarker,
                                                             ),
                                                           ),
                                                           Column(
                                                             spacing: 0,
                                                             children: [
                                                               Text(
-                                                                "65",
+                                                                "${data?.currWeightGain?.totalGain}/${data?.currWeightGain?.recGain ?? 0}",
                                                                 style: CustomText.subHeading2(
                                                                   color:
-                                                                      CustomColor
-                                                                          .primaryDarker,
+                                                                  CustomColor
+                                                                      .primaryDarker,
                                                                 ),
                                                               ),
                                                               Text(
                                                                 "kg",
                                                                 style: CustomText.text2(
                                                                   color:
-                                                                      CustomColor
-                                                                          .primaryDarker,
+                                                                  CustomColor
+                                                                      .primaryDarker,
                                                                 ),
                                                               ),
                                                             ],
@@ -394,45 +407,45 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       width: 1,
                                                       decoration: BoxDecoration(
                                                         color:
-                                                            CustomColor
-                                                                .darkGray,
+                                                        CustomColor
+                                                            .darkGray,
                                                       ),
                                                     ),
                                                     Container(
-                                                      width: 70,
+                                                      // width: 80,
                                                       padding:
-                                                          EdgeInsets.symmetric(
-                                                            // horizontal: 10,
-                                                            vertical: 24,
-                                                          ),
+                                                      EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 24,
+                                                      ),
                                                       child: Column(
                                                         spacing: 8,
                                                         children: [
                                                           Text(
-                                                            "Progress",
+                                                            "Percentage",
                                                             style: CustomText.text1(
                                                               color:
-                                                                  CustomColor
-                                                                      .primaryDarker,
+                                                              CustomColor
+                                                                  .primaryDarker,
                                                             ),
                                                           ),
                                                           Column(
                                                             spacing: 0,
                                                             children: [
                                                               Text(
-                                                                "58",
+                                                                "${data?.currWeightGain?.percentage}",
                                                                 style: CustomText.subHeading2(
                                                                   color:
-                                                                      CustomColor
-                                                                          .primaryDarker,
+                                                                  CustomColor
+                                                                      .primaryDarker,
                                                                 ),
                                                               ),
                                                               Text(
-                                                                "kg",
+                                                                "%",
                                                                 style: CustomText.text2(
                                                                   color:
-                                                                      CustomColor
-                                                                          .primaryDarker,
+                                                                  CustomColor
+                                                                      .primaryDarker,
                                                                 ),
                                                               ),
                                                             ],
@@ -445,7 +458,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                               ),
                                             ],
                                           ),
-                                        ),
+                                        )
+                                        ,
                                       ],
                                     ),
                                   ),
@@ -519,7 +533,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   ),
                                                 ),
                                                 child: Text(
-                                                  "16 August 2025 - Week 3",
+                                                  "Exercise",
                                                   style: CustomText.text1(
                                                     color:
                                                         CustomColor
@@ -616,44 +630,25 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 children: [
-                                                  Container(
-                                                    margin: EdgeInsets.fromLTRB(
-                                                      0,
-                                                      0,
-                                                      8,
-                                                      0,
-                                                    ),
-                                                    child:
-                                                        CustomCard.dailyFoodDiary2x2(
-                                                          deviceWidth:
-                                                              deviceWidth,
-                                                        ),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.fromLTRB(
-                                                      0,
-                                                      0,
-                                                      8,
-                                                      0,
-                                                    ),
-                                                    child:
-                                                        CustomCard.dailyFoodDiary2x2(
-                                                          deviceWidth:
-                                                              deviceWidth,
-                                                        ),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.fromLTRB(
-                                                      0,
-                                                      0,
-                                                      8,
-                                                      0,
-                                                    ),
-                                                    child:
-                                                        CustomCard.dailyFoodDiary2x2(
-                                                          deviceWidth:
-                                                              deviceWidth,
-                                                        ),
+                                                  Row(
+                                                    spacing: 8,
+                                                    children:
+                                                        data?.dailyLogs?.map((
+                                                          e,
+                                                        ) {
+                                                          return CustomCard.dailyFoodDiary2x2(
+                                                            deviceWidth:
+                                                                deviceWidth,
+                                                            foodName:
+                                                                e.foodName ??
+                                                                "",
+                                                            amount:
+                                                                e.amount ?? 0,
+                                                            nutrients:
+                                                                e.nutrientsListDetail,
+                                                          );
+                                                        }).toList() ??
+                                                        [],
                                                   ),
                                                 ],
                                               ),

@@ -25,10 +25,10 @@ class CreatePlanPage extends StatefulWidget {
 
 class _CreatePlanPageState extends State<CreatePlanPage> {
   DateTime dob = DateTime.now();
-  int height = 0;
+  double height = 0;
   int weekOfPregnancy = 0;
-  int currentWeight = 0;
-  int prePregnancyWeight = 0;
+  double currentWeight = 0;
+  double prePregnancyWeight = 0;
   bool isLoading = false;
 
   void _createPlanButtonPressed() async {
@@ -52,9 +52,9 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
 
       var reqBody = CreatePlanRequest(
         age: calculateAge(dob),
-        currentWeight: currentWeight.toDouble(),
-        height: height.toDouble(),
-        prePregnancyWeight: prePregnancyWeight.toDouble(),
+        currentWeight: currentWeight,
+        height: height,
+        prePregnancyWeight: prePregnancyWeight,
         weekPregnancy: weekOfPregnancy,
         DOBstring: DateFormat('yyyy-MM-dd').format(dob),
       );
@@ -159,7 +159,7 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
                     metricsText: "week",
                     onChanged:
                         (e) => setState(() {
-                          weekOfPregnancy = e;
+                          weekOfPregnancy = e.toInt();
                         }),
                   ),
                 ],

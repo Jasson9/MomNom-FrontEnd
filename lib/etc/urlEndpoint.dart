@@ -14,4 +14,7 @@ class URLEndpoint {
   static Uri get dailyCalorieLog => baseUrl.toUri("/DailyCalorieLog");
   static Uri get addFoodDiary => baseUrl.toUri("/AddFoodDiary");
   static Uri get foodDetection => baseUrl.toUri("/FoodDetection");
+  static Uri get weightPlanProgress => baseUrl.toUri("/WeightPlanProgress");
+  static Uri get addWeightPlanProgress => baseUrl.toUri("/WeightPlanProgress/AddNewWeight");
+  static Uri get nutrientPlanProgress => baseUrl.toUri("/NutritionPlanProgress");
 }

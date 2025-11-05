@@ -169,20 +169,24 @@ mixin CustomCard implements Card {
     );
   }
 
-
   static Container dailyFoodDiary3x2({
     required double deviceWidth,
     required List<Nutrient> nutrients,
     required String foodName,
-    required double amount
+    required double amount,
   }) {
-
-    Nutrient? calorie = nutrients.where((e) => e.nutrientName == "Calorie").firstOrNull;
-    Nutrient? protein = nutrients.where((e)=>e.nutrientName == "Protein").firstOrNull;
-    Nutrient? iron = nutrients.where((e)=>e.nutrientName == "Iron").firstOrNull;
-    Nutrient? carbohydrate = nutrients.where((e)=>e.nutrientName == "Carbohydrate").firstOrNull;
-    Nutrient? fiber = nutrients.where((e)=>e.nutrientName == "Fiber").firstOrNull;
-    Nutrient? calcium = nutrients.where((e)=>e.nutrientName == "Calcium").firstOrNull;
+    Nutrient? calorie =
+        nutrients.where((e) => e.nutrientName == "Calorie").firstOrNull;
+    Nutrient? protein =
+        nutrients.where((e) => e.nutrientName == "Protein").firstOrNull;
+    Nutrient? iron =
+        nutrients.where((e) => e.nutrientName == "Iron").firstOrNull;
+    Nutrient? carbohydrate =
+        nutrients.where((e) => e.nutrientName == "Carbohydrate").firstOrNull;
+    Nutrient? fiber =
+        nutrients.where((e) => e.nutrientName == "Fiber").firstOrNull;
+    Nutrient? calcium =
+        nutrients.where((e) => e.nutrientName == "Calcium").firstOrNull;
 
     return Container(
       width: deviceWidth * 0.9,
@@ -197,7 +201,7 @@ mixin CustomCard implements Card {
           SizedBox(
             width: deviceWidth * 0.8,
             child: Text(
-              "${foodName} - ${amount.round()}gr",
+              "$foodName - ${amount.round()}gr",
               textAlign: TextAlign.left,
               style: CustomText.subHeading3(color: CustomColor.tertiary),
             ),
@@ -404,7 +408,20 @@ mixin CustomCard implements Card {
     );
   }
 
-  static Widget dailyFoodDiary2x2({required double deviceWidth}) {
+  static Widget dailyFoodDiary2x2({
+    required double deviceWidth,
+    required List<Nutrient> nutrients,
+    required String foodName,
+    required double amount,
+  }) {
+    Nutrient? calorie =
+        nutrients.where((e) => e.nutrientName == "Calorie").firstOrNull;
+    Nutrient? protein =
+        nutrients.where((e) => e.nutrientName == "Protein").firstOrNull;
+    Nutrient? carbohydrate =
+        nutrients.where((e) => e.nutrientName == "Carbohydrate").firstOrNull;
+    Nutrient? fiber =
+        nutrients.where((e) => e.nutrientName == "Fiber").firstOrNull;
     return Container(
       width: 240,
       padding: EdgeInsets.all(16),
@@ -418,7 +435,7 @@ mixin CustomCard implements Card {
           SizedBox(
             width: 160,
             child: Text(
-              "Chicken Breast",
+              "$foodName - ${amount.round()}gr",
               textAlign: TextAlign.left,
               style: CustomText.subHeading3(color: CustomColor.tertiary),
             ),
@@ -452,7 +469,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX kcal",
+                            "${calorie?.amount ?? ""} ${calorie?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -474,7 +491,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${protein?.amount ?? ""} ${protein?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -508,7 +525,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${carbohydrate?.amount ?? ""} ${carbohydrate?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -530,7 +547,7 @@ mixin CustomCard implements Card {
                             ),
                           ),
                           Text(
-                            "XX gr",
+                            "${fiber?.amount ?? ""} ${fiber?.unit ?? ""}",
                             style: CustomText.text3(
                               color: CustomColor.white,
                               bold: true,
@@ -643,7 +660,8 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.calorie?.nutrientName ?? "",
+                                    diaryWeek.nutrients.calorie?.nutrientName ??
+                                        "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
                                       bold: true,
@@ -664,7 +682,8 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.protein?.nutrientName ?? "",
+                                    diaryWeek.nutrients.protein?.nutrientName ??
+                                        "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
                                       bold: true,
@@ -690,7 +709,10 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.carbohydrate?.nutrientName ??
+                                    diaryWeek
+                                            .nutrients
+                                            .carbohydrate
+                                            ?.nutrientName ??
                                         "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
@@ -712,7 +734,8 @@ mixin CustomCard implements Card {
                               Column(
                                 children: [
                                   Text(
-                                    diaryWeek.nutrients.fiber?.nutrientName ?? "",
+                                    diaryWeek.nutrients.fiber?.nutrientName ??
+                                        "",
                                     style: CustomText.textMd1(
                                       color: CustomColor.white,
                                       bold: true,

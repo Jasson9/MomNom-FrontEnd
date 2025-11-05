@@ -26,6 +26,7 @@ mixin CustomNavBar implements NavigationBar {
             String destPath = "";
             Object arguments = Object();
             Widget page = context.widget;
+            print(index);
             switch (index) {
               case 0:
                 page = DashboardPage();
