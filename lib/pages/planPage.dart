@@ -537,24 +537,24 @@ class _PlanPageState extends State<PlanPage> {
                           tooltipMargin: 0,
                           getTooltipItems: (e) {
                             return e.map((e) {
-                              if (e.x.toInt() - 1 == 0) {
-                                return LineTooltipItem("", TextStyle());
-                              }
+                              // if (e.x.toInt() - 1 == 0) {
+                              //   return LineTooltipItem("", TextStyle());
+                              // }
                               double val = 0;
                               int idx = e.x.toInt();
                               if (e.bar.color == CustomColor.primaryDark) {
                                 val =
-                                ((snapshot
+                                (snapshot
                                     ?.data
                                     ?.data
                                     ?.weightGainProgress[0]
                                     .recGain ??
-                                    0) -
-                                    (progressData?.first ?? 0));
+                                    0);
                               } else {
-                                val =
-                                (progressData?[idx - 1] ??
-                                    0 - (progressData?[idx - 2] ?? 0));
+                                // val =
+                                // (progressData?[idx - 1] ??
+                                //     0 - (progressData?[idx - 2] ?? 0));
+                                val = progressData?[idx-1] ?? 0;
                               }
 
                               return LineTooltipItem(

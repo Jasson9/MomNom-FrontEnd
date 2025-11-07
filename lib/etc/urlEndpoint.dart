@@ -17,4 +17,5 @@ class URLEndpoint {
   static Uri get weightPlanProgress => baseUrl.toUri("/WeightPlanProgress");
   static Uri get addWeightPlanProgress => baseUrl.toUri("/WeightPlanProgress/AddNewWeight");
   static Uri get nutrientPlanProgress => baseUrl.toUri("/NutritionPlanProgress");
+  static Uri get checkUpdate => baseUrl.toUri("/UpdateCheck");
 }

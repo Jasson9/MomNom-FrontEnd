@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class PageRouteProperty implements Widget{
-  final String routeName = "";
+  static final String routeName = "";
 }
 
 int calculateAge(DateTime birthDate) {

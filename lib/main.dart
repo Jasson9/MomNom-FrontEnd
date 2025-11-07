@@ -1,6 +1,7 @@
 import 'package:MomNom/pages/adddiaryPage.dart';
 import 'package:MomNom/components/button.dart';
 import 'package:MomNom/pages/exercisePage2.dart';
+import 'package:MomNom/pages/initalPage.dart';
 import 'package:MomNom/pages/profilePage.dart';
 import 'package:MomNom/etc/transitions.dart';
 import 'package:MomNom/etc/utils.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
   static List<PageRouteProperty> pages = [
     const LoginPage()
   ];
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -46,10 +48,7 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      initialRoute: '/dashboard',
-      // routes: {
-      //   for(var page in pages) page.routeName: (context) => page
-      // },
+      initialRoute: InitialPage.routeName,
 
       routes: {
         '/': (context) => const LoginPage(),
@@ -63,6 +62,7 @@ class MyApp extends StatelessWidget {
         DailyDiaryPage.routeName: (context) => const DailyDiaryPage(),
         AddDiaryPage.routeName: (context) => const AddDiaryPage(),
         ProfilePage.routeName: (context) => const ProfilePage(),
+        InitialPage.routeName: (context) => const InitialPage(),
       },
     );
   }
