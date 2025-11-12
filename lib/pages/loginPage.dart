@@ -55,11 +55,10 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     try {
-
-      if(strPassword.isEmpty){
+      if (strPassword.isEmpty) {
         throw ValidationException("Password should not be empty");
       }
-      if(strEmail.isEmpty){
+      if (strEmail.isEmpty) {
         throw ValidationException("Email should not be empty");
       }
 
@@ -81,12 +80,11 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (ex) {
       if (mounted) customErrorHandler(ex, context);
-    } finally{
+    } finally {
       setState(() {
         isLoading = false;
       });
     }
-
   }
 
   @override
@@ -132,36 +130,56 @@ class _LoginPageState extends State<LoginPage> {
                     style: CustomText.subHeading3(),
                     textAlign: TextAlign.left,
                   ),
-                  CustomTextField.input(
-                    placeholder: "Password",
-                    onChanged: _passwordChanged,
-                    obscureText: true,
+                  Column(
+                    children: [
+                      CustomTextField.input(
+                        placeholder: "Password",
+                        onChanged: _passwordChanged,
+                        obscureText: true,
+                      ),
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/forgotPassword");
+                            },
+                            child: Text(
+                              'Forgot Password?',
+                              style: CustomText.text1(color: CustomColor.white),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            Container(
-              width: deviceWidth * 0.6,
-              child: Column(
-                spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: deviceWidth * 0.6,
-                    child: CustomButton.secondary(
-                      text: "login",
-                      onPress: sendLoginRequest,
-                      isLoading: isLoading
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/register");
-                    },
-                    child: Text(
-                      'Don’t Have An Account? Register Here',
-                      style: CustomText.text1(color: CustomColor.white),
-                      textAlign: TextAlign.center,
+                  Center(
+                    child: Container(
+                      width: deviceWidth * 0.6,
+                      child: Column(
+                        spacing: 8,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: deviceWidth * 0.6,
+                            child: CustomButton.secondary(
+                              text: "login",
+                              onPress: sendLoginRequest,
+                              isLoading: isLoading,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/register");
+                            },
+                            child: Text(
+                              'Don’t Have An Account? Register Here',
+                              style: CustomText.text1(color: CustomColor.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:MomNom/pages/ForgotPasswordPage.dart';
 import 'package:MomNom/pages/adddiaryPage.dart';
 import 'package:MomNom/components/button.dart';
 import 'package:MomNom/pages/exercisePage2.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
         AddDiaryPage.routeName: (context) => const AddDiaryPage(),
         ProfilePage.routeName: (context) => const ProfilePage(),
         InitialPage.routeName: (context) => const InitialPage(),
+        ForgotPasswordPage.routeName: (context) => const ForgotPasswordPage(),
       },
     );
   }

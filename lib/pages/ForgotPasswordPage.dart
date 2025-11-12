@@ -1,0 +1,141 @@
+import 'dart:convert';
+
+import 'package:MomNom/etc/errorHandler.dart';
+import 'package:MomNom/etc/urlEndpoint.dart';
+import 'package:MomNom/etc/utils.dart';
+import 'package:MomNom/model/base.dart';
+import 'package:MomNom/model/exceptions.dart';
+import 'package:MomNom/model/forgotPassword.dart';
+import 'package:MomNom/model/login.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../components/snackbar.dart';
+import '../etc/requestHandler.dart';
+import '../etc/styles.dart';
+import '../components/textfield.dart';
+import '../components/button.dart';
+import 'package:http/http.dart' as http;
+
+class ForgotPasswordPage extends StatefulWidget implements PageRouteProperty {
+  const ForgotPasswordPage({super.key});
+
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordState();
+
+  @override
+  static String routeName = "/forgotPassword";
+}
+
+class _ForgotPasswordState extends State<ForgotPasswordPage> {
+  String strEmail = "";
+  String strPassword = "";
+  String strPasswordConfirm = "";
+  bool isLoading = false;
+
+  void sendRegisterRequest() async {
+    if (isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      if(strEmail.isEmpty){
+        throw ValidationException("Email should not be empty");
+      }
+      if(strPassword.isEmpty){
+        throw ValidationException("Password should not be empty");
+      }
+      if(strPasswordConfirm.isEmpty){
+        throw ValidationException("Confirm Password should not be empty");
+      }
+      if(strPassword != strPasswordConfirm){
+        throw ValidationException("Confirm Password is not same with Password");
+      }
+
+
+      var reqBody = ForgotPasswordRequest(
+          email: strEmail,
+          password: strPassword,
+          confirmPassword: strPasswordConfirm,
+      );
+
+      BaseResponse<ForgotPasswordResponse> apiResponse = BaseResponse.fromJson(
+        await RequestHandler.sendRequest(
+          item: reqBody,
+          url: URLEndpoint.forgotPassword,
+        ),
+            (json) => (ForgotPasswordResponse.fromJson(json as Map<String, dynamic>)),
+      );
+
+      if(apiResponse.statusCode == 200){
+        CustomSnackbar.showErrorSnackbar(apiResponse.data?.message ?? "Success", context);
+        if (mounted) Navigator.pushReplacementNamed(context, "/login");
+      }
+    } catch (ex) {
+      if(mounted)customErrorHandler(ex, context);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.sizeOf(context).width;
+    double deviceHeight = MediaQuery.sizeOf(context).height;
+
+    return Scaffold(
+      backgroundColor: CustomColor.primaryDark,
+      body: Center(
+        child: Column(
+          spacing: 20,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset("assets/images/AppLogo-Sprite.png",scale: 0.7,),
+            Text('Forgot Password', style: CustomText.heading2(color: CustomColor.white)),
+            SizedBox(width: deviceWidth * 0.9,
+              child: Column(spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Email Address', style: CustomText.subHeading3(),textAlign: TextAlign.left),
+                  CustomTextField.input(placeholder:"example123@gmail.com",onChanged: (String str)=>strEmail = str )
+                ],
+              ),
+            ),
+            SizedBox(width:  deviceWidth * 0.9,
+              child: Column(spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('New Password', style: CustomText.subHeading3(),textAlign: TextAlign.left,),
+                  CustomTextField.input(placeholder:"New Password",onChanged: (String str)=>strPassword = str ,obscureText: true)
+                ],
+              ),
+            ),
+            SizedBox(width:  deviceWidth * 0.9,
+              child: Column(spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Confirm Password', style: CustomText.subHeading3(),textAlign: TextAlign.left,),
+                  CustomTextField.input(placeholder:"Confirm Password",onChanged: (String str)=>strPasswordConfirm = str ,obscureText: true)
+                ],
+              ),
+            ),
+            SizedBox(
+              width:  deviceWidth * 0.6,
+              child: Column(spacing: 8,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(width: deviceWidth * 0.6,child:
+                  CustomButton.secondary(text: "Reset Password", onPress: ()=>sendRegisterRequest(),isLoading: isLoading)
+                    ,),
+                  TextButton(onPressed: ()=>Navigator.pushReplacementNamed(context,"/login"), child: Text('Already Have An Account? Login Here', style: CustomText.text1(color: CustomColor.white), textAlign: TextAlign.center,))
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
