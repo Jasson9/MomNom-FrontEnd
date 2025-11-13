@@ -29,7 +29,33 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
   int weekOfPregnancy = 0;
   double currentWeight = 0;
   double prePregnancyWeight = 0;
+  TextEditingController prePregnancyController = TextEditingController();
   bool isLoading = false;
+
+  void _calculatePrePregnancyWeight(){
+    if(weekOfPregnancy <= 0){
+      CustomSnackbar.showErrorSnackbar("Week of Pregnancy Cannot be Empty and must be more than 0", context);
+    }
+
+    if(currentWeight <= 0){
+      CustomSnackbar.showErrorSnackbar("Current Weight Cannot be Empty and must be more than 0", context);
+    }
+
+    var pregnancyDay = weekOfPregnancy * 7;
+    late double calcPrePregnancyWeight;
+    if (pregnancyDay > 84)
+    {
+      calcPrePregnancyWeight = currentWeight - 1 - (0.44 * (pregnancyDay - 12));
+    } else
+    {
+      calcPrePregnancyWeight = currentWeight - ((1 / 84) * pregnancyDay);
+    }
+
+    prePregnancyController.value = TextEditingValue(text: calcPrePregnancyWeight.toString());
+    setState(() {
+      prePregnancyWeight = calcPrePregnancyWeight;
+    });
+  }
 
   void _createPlanButtonPressed() async {
     if (isLoading) return;
@@ -176,13 +202,19 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
                     style: CustomText.subHeading3(),
                     textAlign: TextAlign.left,
                   ),
-                  CustomTextField.inputWithMetrics(
-                    metricsText: "kg",
-                    onChanged:
-                        (e) => setState(() {
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(child: CustomTextField.inputWithMetrics(
+                        metricsText: "kg",
+                        onChanged:
+                            (e) => setState(() {
                           currentWeight = e;
                         }),
-                  ),
+                      )),
+                      CustomButton.secondary(text: "Calculate",horizontalPad: 8, onPress: ()=>_calculatePrePregnancyWeight())
+                    ],
+                  )
                 ],
               ),
             ),
@@ -203,6 +235,7 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
                         (e) => setState(() {
                           prePregnancyWeight = e;
                         }),
+                    controller: prePregnancyController
                   ),
                   Text(
                     'Please fill in your pre-pregnancy weight if the calculation result is different from the actual weight',

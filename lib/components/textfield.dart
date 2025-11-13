@@ -301,6 +301,7 @@ class CustomTextField extends TextField {
     bool outline = false,
     bool filled = true,
     String headerTitle = "",
+    TextEditingController? controller
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,6 +327,7 @@ class CustomTextField extends TextField {
               Expanded(
                 child: TextField(
                   keyboardType: TextInputType.number,
+                  controller: controller,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   style: CustomText.text1(color: CustomColor.black),
                   decoration: InputDecoration(
@@ -391,7 +393,7 @@ class CustomTextField extends TextField {
       text: value.year.toString(),
     );
 
-    void dateFieldChange(String t) {
+    void dateFieldChange() {
       if (_yearController.value.text == "") {
         _yearController.value = TextEditingValue(text: "0");
       }
@@ -455,7 +457,7 @@ class CustomTextField extends TextField {
         int.parse(_monthController.value.text),
         int.parse(_dateController.value.text),
       );
-
+      print(value);
       if (onDateTimeChanged != null) {
         onDateTimeChanged(value!);
       }
@@ -483,6 +485,8 @@ class CustomTextField extends TextField {
           text: datePicker.year.toString(),
         );
       }
+
+      dateFieldChange();
     }
 
     return Column(
@@ -531,7 +535,7 @@ class CustomTextField extends TextField {
                       ),
                     ),
                     maxLines: 1,
-                    onChanged: dateFieldChange,
+                    onChanged: (e)=>dateFieldChange(),
                     controller: _dateController,
                   ),
                 ),
@@ -563,7 +567,7 @@ class CustomTextField extends TextField {
                       ),
                     ),
                     maxLines: 1,
-                    onChanged: dateFieldChange,
+                    onChanged: (e)=>dateFieldChange(),
                     controller: _monthController,
                   ),
                 ),
@@ -595,7 +599,7 @@ class CustomTextField extends TextField {
                       ),
                     ),
                     maxLines: 1,
-                    onChanged: dateFieldChange,
+                    onChanged: (e)=>dateFieldChange(),
                     controller: _yearController,
                   ),
                 ),
